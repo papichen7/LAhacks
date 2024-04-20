@@ -17,6 +17,9 @@ module.exports = {
       fontFamily: {
         sans: ['Roboto', 'sans-serif'], // 'sans' is the default font family in Tailwind
       },
+      spacing: {
+        '100': '14rem'
+      }
     },
   },
   plugins: [],

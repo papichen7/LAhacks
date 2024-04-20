@@ -5,7 +5,7 @@ import Chat from "./chats/Chat";
 
 import Stock from "./stock.jpg"
 
-function Chats() {
+function Chats({setChat}) {
     const [chats, setChats] = useState([
         {
             id: 1,
@@ -14,19 +14,23 @@ function Chats() {
             users: [{ name: "Alice", image: "" }]
         },
         {
-            id: 1,
+            id: 2,
             name: "Second Chat",
             image: Stock,
             users: [{ name: "Alice", image: "" }]
         },
         {
-            id: 1,
+            id: 3,
             name: "Third Chat",
             image: Stock,
             users: [{ name: "Alice", image: "" }]
         }
         // Add more chats if needed for demonstration
     ]);
+
+    const handleClick = (id) => {
+        setChat(id);
+      };
 
     const findChat = (searchTerm) => {
         const foundChats = chats.filter(chat => chat.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -37,7 +41,7 @@ function Chats() {
         const newChat = {
             id: chats.length + 1,
             name: "New Chat",
-            image: "", // Optionally add image for new chat
+            image: "",
             users: [{ name: "New User", image: "" }]
         };
         setChats(prevChats => [...prevChats, newChat]);
@@ -56,7 +60,7 @@ function Chats() {
                 </div>
 
                 {chats.map((chat) => (
-                    <Chat key={chat.id} id={chat.id} name={chat.name} image={chat.image} users={chat.users} />
+                    <Chat key={chat.id} id={chat.id} name={chat.name} handler={handleClick} image={chat.image} users={chat.users} />
                 ))}
 
             </div>
