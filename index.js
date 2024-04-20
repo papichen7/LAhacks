@@ -1,52 +1,41 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+require("dotenv").config();
 
-// const dotenv = require("dotenv")
-// dotenv.config()
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
-// Access your API key as an environment variable (see "Set up your API key" above)
-const genAI = new GoogleGenerativeAI("AIzaSyCKqHukclhMCVJ03eG4FypBDvYQOHCBB4E");
+// Function to start a conversation with a model based on historical figure info
+async function startConversationWithFigure(figure) {
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-async function run() {
-  // For text-only input, use the gemini-pro model
-  const model = genAI.getGenerativeModel({ model: "gemini-pro"});
-  const model2 = genAI.getGenerativeModel({ model: "gemini-pro"});
-
-  const name = "Socrates";
-  const info = "before the forced suicide";
-
-  const userSetupMessage = `You are ${name}. It is a period ${info}. Respond as if you are ${name} engaging in a dialogue, providing insights and posing questions in your characteristic manner`
-  const ModelSetupMessage = `I am ${name}. It is a period ${info}. I will engage in dialogue as if I am ${name}, offering insights and posing questions in my characteristic manner.`
+  const userSetupMessage = `You are ${figure.name}. It is a period ${figure.info}. Respond as if you are ${figure.name} engaging in a dialogue, providing insights and posing questions in your characteristic manner`;
+  const modelSetupMessage = `I am ${figure.name}. It is a period ${figure.info}. I will engage in dialogue as if I am ${figure.name}, offering insights and posing questions in my characteristic manner.`;
 
   const chat = model.startChat({
     history: [
-      {
-        role: "user",
-        parts: [{ text: userSetupMessage }],
-      },
-      {
-        role: "model",
-        parts: [{ text: ModelSetupMessage }],
-      },
-    //   {
-    //     role: "user",
-    //     parts: [{ text: "I also have 5 cats in my house." }],
-    //   },
-    //   {
-    //     role: "model",
-    //     parts: [{ text: "Nice. What would you like to know?" }],
-    //   },
+      { role: "user", parts: [{ text: userSetupMessage }] },
+      { role: "model", parts: [{ text: modelSetupMessage }] },
     ],
-    generationConfig: {
-      maxOutputTokens: 500,
-    },
+    generationConfig: { maxOutputTokens: 500 },
   });
 
   const msg = "What do you think a bad marriage makes you a philosopher?";
 
   const result = await chat.sendMessage(msg);
   const response = await result.response;
-  const text = response.text();
-  console.log(text);
+  const text = await response.text();
+  console.log(`${figure.name}: ${text}`);
+}
+
+async function run() {
+  const figures = [
+    { name: "Socrates", info: "before the forced suicide" },
+    { name: "Leonardo da Vinci", info: "during the High Renaissance" },
+  ];
+
+  for (const figure of figures) {
+    await startConversationWithFigure(figure);
+    console.log();
+  }
 }
 
 run();
