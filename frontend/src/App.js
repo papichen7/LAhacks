@@ -8,7 +8,7 @@ import ChatBox from './ChatBox';
 import Input from "./Input"
 import { useState } from 'react';
 import Stock from "./stock.jpg"
-
+import Chats from './Chats';
 
 function App() {
 
@@ -26,11 +26,13 @@ function App() {
           </div>
         </div>
 
-        <div className='h-full w-[20%] bg-background'>
+        <Chats />
+
+        {/* <div className='h-full w-[20%] bg-background'>
           <div>
           LA Hacks
           </div>
-        </div>
+        </div> */}
 
         <div className="currbg bg-cyan-400 flex flex-col justify-between h-full w-[70%]">
           <div class="h-full w-full backdrop-blur-[4px] bg-cover bg-center flex flex-col justify-between">
