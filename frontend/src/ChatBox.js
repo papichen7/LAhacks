@@ -57,12 +57,12 @@ function ChatBox({ messages, messageIndex, setMessageIndex, onSend, total}) {
                   <div ref={messageEndRef} /> {/* This empty div acts as a scroll anchor */}
               </div>
           </div>
-        <button className='flex justify-end items-center text-end border-[0.5px] border-opacity-60 border-white bg-cyanish max-w-fit ml-auto px-3 py-2 rounded-2xl bg-opacity-60 hover:bg-opacity-80 hover:border-opacity-80 cursor-pointer transition duration-200 ease-in-out'
-                onClick={handleSend} 
-        >
+          <button className='flex justify-end items-center text-end border-[0.5px] border-opacity-60 border-white bg-cyanish max-w-fit ml-auto px-3 py-2 rounded-2xl bg-opacity-60 hover:bg-opacity-80 hover:border-opacity-80 cursor-pointer transition duration-200 ease-in-out'
+                  onClick={handleSend} 
+          >
                   <p>Next Message</p>
                   <ChevronDoubleRightIcon className='h-8 w-8'/>
-              </button>
+          </button>
       </div>
     );
 }
