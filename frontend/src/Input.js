@@ -2,7 +2,9 @@ import { MicrophoneIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { ReactComponent as Logo } from './logo.svg';
 import { useState } from "react";
 
-export default function Input({ onSend, messageIndex, setMessageIndex }) {
+
+
+export default function Input({ onSend, messageIndex, setMessageIndex, total }) {
     const [input, setInput] = useState('');
 
     const handleInputChange = (e) => {
@@ -13,7 +15,7 @@ export default function Input({ onSend, messageIndex, setMessageIndex }) {
         if (input.trim()) {
             sendInputToServer(input, messageIndex);
             setInput('');
-            setMessageIndex(messageIndex + 1);
+            setMessageIndex((messageIndex + 1) % total);
         }
     };
 

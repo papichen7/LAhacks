@@ -6,7 +6,7 @@ import {
 
 import Data from "./data/philosophers.json"
 
-function ChatBox({ messages, messageIndex, setMessageIndex}) {
+function ChatBox({ messages, messageIndex, setMessageIndex, onSend, total}) {
     const messageEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
 
@@ -21,10 +21,8 @@ function ChatBox({ messages, messageIndex, setMessageIndex}) {
 
 
     const handleSend = () => {
-        if (input.trim()) {
-            sendInputToServer(messageIndex);
-            setMessageIndex(messageIndex + 1);
-        }
+        sendInputToServer(messageIndex);
+        setMessageIndex((messageIndex + 1) % total);
     };
 
     const sendInputToServer = (index) => {

@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 function Sidebar({ name }) {
     return (
         <div className='h-full w-[10%] bg-background justify-center items-center border-r-2'>
-            <div class="flex flex-col gap-100">
+            <div className="flex flex-col gap-100">
                 <Link to="/quiz">
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
                     {/* <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full mt-16 flex items-center"> */}
                     {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full"> */}
 
@@ -17,12 +17,12 @@ function Sidebar({ name }) {
                     </button>
                 </Link>
                 <Link to="/debate">
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
                         Debate
                     </button>
                 </Link>
                 <Link to="/">
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
                         Home
                     </button>
                 </Link>

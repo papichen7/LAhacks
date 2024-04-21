@@ -1,8 +1,9 @@
-import Chats from './Chats';
+// import Chats from './Chats';
 import Input from "./Input";
 import { useEffect, useState } from 'react';
 import Stock from "./stock.jpg"
 import ChatBox from './ChatBox'; 
+import Data from "./data/philosophers.json"
 
 import {
     ChevronLeftIcon,
@@ -44,20 +45,29 @@ function ChatComponent({currChat}) {
     const [messageIndex, setMessageIndex] = useState(0); // State to track message index
 
 
-    const addMessage = (newMessage) => {
-        setMessages([...messages, { name: "User", image: Stock, message: newMessage, position: true }]);
+    const addMessage = (objects) => {
+        setMessages(currentMessages => [
+            ...currentMessages,
+            ...objects.map(object => ({
+                name: object.name,
+                image: Stock, // Ensure `Stock` is defined somewhere in your scope
+                message: object.response,
+                position: object.name === "User"
+            }))
+        ]);
     };
+    
 
     return(
         <div className="currbg bg-cyan-400 flex flex-col justify-between h-full w-[70%]">
-          <div class="h-full w-full backdrop-blur-[4px] bg-cover bg-center flex flex-col justify-between">
+          <div className="h-full w-full backdrop-blur-[4px] bg-cover bg-center flex flex-col justify-between">
             <div className=' flex bg-white p-3'>
               <ChevronLeftIcon className='h-[24px] w-[28px] mt-2 border-cyan-200 border'/>
               <div className='text-[24px] ml-2'>Conversation with friends</div>
           </div>
           
-            <ChatBox messages={messages} messageIndex={messageIndex} setMessageIndex={setMessageIndex} />
-            <Input onSend={addMessage} messageIndex={messageIndex} setMessageIndex={setMessageIndex} />
+                <ChatBox messages={messages} messageIndex={messageIndex} setMessageIndex={setMessageIndex} onSend={addMessage} total={Data.length} />
+                <Input onSend={addMessage} messageIndex={messageIndex} setMessageIndex={setMessageIndex} total={Data.length} />
             
           </div>
         </div>
