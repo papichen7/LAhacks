@@ -36,26 +36,7 @@ async function startConversation(figures) {
             chatInit: userSetupMessage,
         });
     }
-    
-    // const setup = `Task: Carefully remove any instances of the author's name prefixed with '**', or followed by a colon ':' from the start of sentences in the provided text. Ensure that no other alterations are made to the text. The goal is to clean the formatting without changing the content or meaning of the sentences.
 
-    // Original Text:
-    // "**Plato** Greetings, User. I am Plato, and I welcome you to this dialogue. Plato: I am eager to engage in philosophical discourse with you and explore the depths of knowledge together. Shall we begin our inquiry?"
-    
-    // Required Action:
-    // Please remove the '**Plato**' and 'Plato:' prefixes from the sentences, adjusting only these and ensuring that the subsequent text is grammatically correct and unchanged in meaning.
-    
-    // Expected Output:
-    // "Greetings, User. I am Plato, and I welcome you to this dialogue. I am eager to engage in philosophical discourse with you and explore the depths of knowledge together. Shall we begin our inquiry?"
-    // `
-        
-    // let model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-    // models.push({
-    //     name: "remover",
-    //     model: model,
-    //     setup: setup
-    // })
 
     return models.map((model, index) => ({ message: `Created model for ${model.name} as model${index}` }));
 }
@@ -67,12 +48,6 @@ async function simulateSharedConversation(modelIndex, newMessage) {
         if (newMessage !== "") {
             unifiedHistory += "\n";
             unifiedHistory += `User: ${newMessage}`;
-            const userRes = {
-                id: -1,
-                name: "User",
-                response: newMessage
-            }
-            to_return.push(userRes);
         }
 
         const prompt = models[modelIndex].chatInit + unifiedHistory;

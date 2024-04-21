@@ -14,6 +14,12 @@ export default function Input({ onSend, messageIndex, setMessageIndex, total }) 
     const handleSend = () => {
         if (input.trim()) {
             sendInputToServer(input, messageIndex);
+            const userRes = {
+                id: -1,
+                name: "User",
+                response: input
+            }
+            onSend([userRes]);
             setInput('');
             setMessageIndex((messageIndex + 1) % total);
         }
