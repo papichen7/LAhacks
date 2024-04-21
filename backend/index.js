@@ -1,13 +1,25 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require('express');
+const mongoose = require('mongoose');
 require("dotenv").config();
+const cors = require('cors');
+
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const cors = require('cors');
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
-app.use(express.json());
+
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error: ' + err);
+    process.exit(-1);
+});
+
+require('./models/User');
+require('./models/Conversation');
+
 
 const models = [];
 let unifiedHistory = "";
@@ -16,7 +28,15 @@ const corsOptions = {
     origin: ["http://localhost:3000"],
   };
   
+app.use(express.json());
 app.use(cors(corsOptions));
+
+const conversationRouter = require("./routes/conversation");
+const userRouter = require("./routes/user");
+// const continentRouter = require("./routes/continent")
+app.use('/cone', conversationRouter)
+app.use('/country', userRouter)
+// app.use('/continent', continentRouter)
 
 
 async function startConversation(figures) {
