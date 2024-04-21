@@ -16,5 +16,11 @@ code {
     monospace;
 }
 
+.contacts {
+  background: linear-gradient(217deg, #c7c5c5, rgba(49, 7, 7, 0) 100.71%),
+          linear-gradient(127deg, #14e5ff, rgba(0,255,0,0) 70.71%),
+          linear-gradient(336deg, #ffc4d8, rgba(255, 255, 255, 0) 70.71%);
+}
+
 
 

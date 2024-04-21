@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Conversation = require('../models/Conversation');
+const User = require('../models/User')
 
 router.get('/', async (req, res) => {
     try {
@@ -11,39 +12,29 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Assuming you have a POST route for '/conversation'
 router.post('/', async (req, res) => {
-    const { name, image, users, chatHistory } = req.body;
-    const conversation = new Conversation({
-        name,
-        image,
-        users,
-        chatHistory
-    });
-
+    const { name, image, users } = req.body;
     try {
-        const newConversation = await conversation.save();
+        const populatedUsers = await User.find({ '_id': { $in: users.map(user => user._id) } });
+        const newConversation = new Conversation({
+            name,
+            image,
+            users: populatedUsers, // This assumes that your Conversation model expects full user objects in the users array
+        });
+        await newConversation.save();
         res.status(201).json(newConversation);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+    } catch (error) {
+        console.error('Failed to create new conversation:', error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 
 router.get('/:id', getConversation, (req, res) => {
     res.json(res.conversation);
 });
 
-router.patch('/:id', getConversation, async (req, res) => {
-    if (req.body.chatHistory != null) {
-        res.conversation.chatHistory.push(req.body.chatHistory);
-    }
-
-    try {
-        const updatedConversation = await res.conversation.save();
-        res.json(updatedConversation);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
 
 // Middleware to fetch a conversation by ID
 async function getConversation(req, res, next) {

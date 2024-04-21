@@ -4,7 +4,7 @@ import { useState } from "react";
 
 
 
-export default function Input({ onSend, messageIndex, setMessageIndex, total }) {
+export default function Input({ onSend }) {
     const [input, setInput] = useState('');
 
     const handleInputChange = (e) => {
@@ -13,15 +13,15 @@ export default function Input({ onSend, messageIndex, setMessageIndex, total }) 
 
     const handleSend = () => {
         if (input.trim()) {
-            sendInputToServer(input, messageIndex);
+            sendInputToServer(input);
             const userRes = {
-                id: -1,
+                id: "6624e96388cf85ea8ddbe3d8",
+                image: "something.webp",
                 name: "User",
                 response: input
             }
             onSend([userRes]);
             setInput('');
-            setMessageIndex((messageIndex + 1) % total);
         }
     };
 
@@ -31,13 +31,13 @@ export default function Input({ onSend, messageIndex, setMessageIndex, total }) 
         }
     };
 
-    const sendInputToServer = (data, index) => {
+    const sendInputToServer = (data) => {
         fetch('http://localhost:8000/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: data, index: index })
+            body: JSON.stringify({ message: data})
         })
         .then(response => response.json())
         .then(data => {
@@ -60,8 +60,6 @@ export default function Input({ onSend, messageIndex, setMessageIndex, total }) 
                 onKeyPress={handleKeyPress}
             />
             <button onClick={handleSend}><PaperAirplaneIcon className='mx-2 w-8 h-8' /></button>
-            <div className="w-px bg-gray-300 h-8 inline-block align-middle mt-2"></div>
-            <button><MicrophoneIcon className='mx-2 w-8 h-8'/></button>
         </div>
     );
 }

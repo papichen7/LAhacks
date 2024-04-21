@@ -4,9 +4,8 @@ import {
   ChevronDoubleRightIcon
 } from "@heroicons/react/24/outline";
 
-import Data from "./data/philosophers.json"
 
-function ChatBox({ messages, messageIndex, setMessageIndex, onSend, total}) {
+function ChatBox({ messages, onSend}) {
     const messageEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
 
@@ -21,17 +20,16 @@ function ChatBox({ messages, messageIndex, setMessageIndex, onSend, total}) {
 
 
     const handleSend = () => {
-        sendInputToServer(messageIndex);
-        setMessageIndex((messageIndex + 1) % total);
+        sendInputToServer();
     };
 
-    const sendInputToServer = (index) => {
+    const sendInputToServer = () => {
         fetch('http://localhost:8000/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: "", index: index })
+            body: JSON.stringify({ message: "", })
         })
         .then(response => response.json())
         .then(data => {
@@ -51,8 +49,8 @@ function ChatBox({ messages, messageIndex, setMessageIndex, onSend, total}) {
               <div className="w-full">
                   <p className='text-center bg-slate-100 bg-opacity-35 mx-auto max-w-fit px-3 py-1 rounded-xl text-gray-500'>Start of your conversation</p>
               
-                  {messages.map((msg, index) => (
-                    <Message key={index} name={msg.name} image={msg.image} message={msg.message} position={msg.position} />
+                  {messages.map((msg) => (
+                    <Message key={msg.message} name={msg.name} image={msg.image} message={msg.message} position={msg.position} />
                   ))}
                   <div ref={messageEndRef} /> {/* This empty div acts as a scroll anchor */}
               </div>
