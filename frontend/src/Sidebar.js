@@ -28,7 +28,6 @@ function Sidebar({ name }) {
                 </Link>
                 </div>
 
-
                 <div className="fixed bottom-0 left-0 right-0 flex">
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
                     <UserCircleIcon className='h-[20px] w-[24px]'></UserCircleIcon>
