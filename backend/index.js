@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 require("dotenv").config();
 const cors = require('cors');
 
+const User = require('./models/User')
+
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-
-
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'data'});
 mongoose.connection.on('error', (err) => {
     console.error('MongoDB connection error: ' + err);
     process.exit(-1);
@@ -49,18 +49,19 @@ async function startConversation(figures) {
 
 
         models.push({
+            _id: figure._id,
             name: figure.name,
             model: model,
             chatInit: userSetupMessage,
         });
-    }
-
+}
 
     return models.map((model, index) => ({ message: `Created model for ${model.name} as model${index}` }));
 }
 
-async function simulateSharedConversation(modelIndex, newMessage) {
+async function simulateSharedConversation(newMessage) {
     try {
+        const modelIndex = Math.floor(Math.random() * models.length);
         // If empty string, this means that we want the model to continue conversation
         const to_return = [];
         if (newMessage !== "") {
@@ -78,10 +79,11 @@ async function simulateSharedConversation(modelIndex, newMessage) {
 
 
         const res = {
-            id: modelIndex,
-            name: models[modelIndex].name,
+            _id: models[modelIndex]._id,
             response: text
-        };
+        }
+
+        // console.log(to_return);
 
         to_return.push(res);
         return to_return;
@@ -96,6 +98,7 @@ async function simulateSharedConversation(modelIndex, newMessage) {
 app.post('/gemini', async (req, res) => {
     try {
         const figures = req.body;
+        // console.log(figures);
         const creationMessages = await startConversation(figures);
         res.json(creationMessages);
     } catch (error) {
@@ -107,15 +110,9 @@ app.post('/gemini', async (req, res) => {
 app.post('/message', async (req, res) => {
 
     try {
-        const { message, index } = req.body;
+        const { message } = req.body;
 
-        if (index === undefined || index >= models.length || index < 0) {
-            return res.status(400).send('Invalid request parameters.');
-        }
-
-        const responseObj = await simulateSharedConversation(index, message);
-
-        // console.log(response)
+        const responseObj = await simulateSharedConversation(message);
 
         res.json(responseObj);
     } catch (error) {

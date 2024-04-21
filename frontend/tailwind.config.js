@@ -12,7 +12,8 @@ module.exports = {
         "lblue": "#DBF1F4",
         "cyanish": "#14e5ff",
         "message": "#00b9f6",      // blue bubble,
-        "search": "#f5f5f5"
+        "search": "#f5f5f5",
+        "opink": "#ffc4d8"
       },
       fontFamily: {
         sans: ['Roboto', 'sans-serif'], // 'sans' is the default font family in Tailwind

@@ -1,1 +1,1 @@
-{"Plato": { "name": "Plato", "image": "../img/plato.wenp", "info": "before he taught Aristoteles" },"Leonardo da Vinci": { "name": "Leonardo da Vinci", "image": "../img/leonardo.webp", "info": "during the High Renaissance" },"Friedrich Nietzsche": { "name": "Friedrich Nietzsche", "image": "../img/friedrich.webp", "info": "before the mental breakdown" }}
+{ "name": "User", "image": "./img/something.webp", "info": "before the mental breakdown" }

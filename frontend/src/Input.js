@@ -4,7 +4,7 @@ import { useState } from "react";
 
 
 
-export default function Input({ onSend, messageIndex, setMessageIndex, total }) {
+export default function Input({ onSend }) {
     const [input, setInput] = useState('');
 
     const handleInputChange = (e) => {
@@ -13,15 +13,13 @@ export default function Input({ onSend, messageIndex, setMessageIndex, total }) 
 
     const handleSend = () => {
         if (input.trim()) {
-            sendInputToServer(input, messageIndex);
-            const userRes = {
-                id: -1,
-                name: "User",
-                response: input
+            sendInputToServer(input);
+            const res = {
+                "_id": '6624e96388cf85ea8ddbe3d8',
+                "response": input
             }
-            onSend([userRes]);
+            onSend(res);
             setInput('');
-            setMessageIndex((messageIndex + 1) % total);
         }
     };
 
@@ -31,13 +29,13 @@ export default function Input({ onSend, messageIndex, setMessageIndex, total }) 
         }
     };
 
-    const sendInputToServer = (data, index) => {
+    const sendInputToServer = (data) => {
         fetch('http://localhost:8000/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: data, index: index })
+            body: JSON.stringify({ message: data })
         })
         .then(response => response.json())
         .then(data => {

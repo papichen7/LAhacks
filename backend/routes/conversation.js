@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Conversation = require('../models/Conversation');
+const User = require('../models/User')
 
 router.get('/', async (req, res) => {
     try {
@@ -11,37 +12,62 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Assuming you have a POST route for '/conversation'
 router.post('/', async (req, res) => {
     const { name, image, users, chatHistory } = req.body;
-    const conversation = new Conversation({
-        name,
-        image,
-        users,
-        chatHistory
-    });
-
     try {
-        const newConversation = await conversation.save();
+        const populatedUsers = await User.find({ '_id': { $in: users.map(user => user._id) } });
+        const newConversation = new Conversation({
+            name,
+            image,
+            users: populatedUsers, // This assumes that your Conversation model expects full user objects in the users array
+            chatHistory
+        });
+        await newConversation.save();
         res.status(201).json(newConversation);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+    } catch (error) {
+        console.error('Failed to create new conversation:', error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 
 router.get('/:id', getConversation, (req, res) => {
     res.json(res.conversation);
 });
 
-router.patch('/:id', getConversation, async (req, res) => {
-    if (req.body.chatHistory != null) {
-        res.conversation.chatHistory.push(req.body.chatHistory);
-    }
 
-    try {
-        const updatedConversation = await res.conversation.save();
-        res.json(updatedConversation);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+router.patch('/:id', getConversation, async (req, res) => {
+    const newEntry = req.body.chatHistory;
+
+    // console.log(newEntry);
+
+    if (newEntry) {
+        // Ensure the newEntry contains all necessary fields and types
+        if (typeof newEntry.message === 'string' &&
+            typeof newEntry.name === 'string' &&
+            typeof newEntry.image === 'string' &&
+            typeof newEntry.position === 'boolean') {
+            
+            // Append the new message to the conversation history
+            res.conversation.chatHistory.push({
+                message: newEntry.message,
+                name: newEntry.name,
+                image: newEntry.image,
+                position: newEntry.position
+            });
+
+            try {
+                const updatedConversation = await res.conversation.save();
+                res.json(updatedConversation);
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
+        } else {
+            res.status(400).json({ message: 'Invalid chat history entry' });
+        }
+    } else {
+        res.status(400).json({ message: 'No chat history provided' });
     }
 });
 
