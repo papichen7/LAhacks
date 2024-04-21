@@ -1,0 +1,6 @@
+.currbg {
+    background:
+    linear-gradient(336deg, #ff0072, rgba(255, 255, 255, 0) 30.71%),
+    linear-gradient(217deg, #14e5ff, rgba(255, 255, 255, 0) 50.71%),
+    linear-gradient(127deg,  #fcfcfc, #ff0072 170.71%);
+  }
