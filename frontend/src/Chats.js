@@ -106,7 +106,7 @@ function Chats({setChat}) {
                         <h1 className='font-bold text-3xl'>Chats</h1>
                         <PlusCircleIcon className='h-8 w-8 cursor-pointer' onClick={toggleCard}/>
                         {isCardVisible && (
-                        <div className="fixed absolute top-full right-0 w-[250px] mt-2 max-h-screen bg-white border border-gray-300 shadow-md p-4 rounded-lg z-50">
+                        <div className="absolute top-full right-0 w-[250px] mt-2 max-h-screen bg-white border border-gray-300 shadow-md p-4 rounded-lg z-50">
                             <div className="text-lg font-bold mb-2">Available Contacts</div>
                             <div className="overflow-y-auto">
                               <ul className="divide-y divide-gray-200 h-full overflow-y-auto">

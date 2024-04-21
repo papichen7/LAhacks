@@ -33,10 +33,8 @@ app.use(cors(corsOptions));
 
 const conversationRouter = require("./routes/conversation");
 const userRouter = require("./routes/user");
-// const continentRouter = require("./routes/continent")
-app.use('/cone', conversationRouter)
-app.use('/country', userRouter)
-// app.use('/continent', continentRouter)
+app.use('/conversation', conversationRouter);
+app.use('/user', userRouter);
 
 
 async function startConversation(figures) {
