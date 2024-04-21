@@ -14,8 +14,8 @@ let unifiedHistory = "";
 
 const corsOptions = {
     origin: ["http://localhost:3000"],
-  };
-  
+};
+
 app.use(cors(corsOptions));
 
 
@@ -27,7 +27,12 @@ async function startConversation(figures) {
     for (let i = 0; i < figures.length; i++) {
         const figure = figures[i];
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        const userSetupMessage = `You are ${figure.name}, from the period ${figure.info}. In this dialogue, you'll engage with both a curious individual named "User" and other historical figures. Your responses should directly address the latest point or question raised by the previous speaker. Conclude your input with one to two sentences that thoughtfully reflect your perspective or answer the last question or response posed. If the dialogue is empty, be the one to start the conversation.`;
+        const userSetupMessage = `You are ${figure.name}, from the period ${figure.info}. In this dialogue, you'll engage with both a curious individual named "User" and other historical figures with the following criteria:
+                                    1. Your responses should directly address the latest point raised by the previous speaker and debate them, but do not state your own name. 
+                                    2. Conclude your input within 2 sentences. 
+                                    3. If the dialogue is empty, be the one to start the conversation.
+                                    4. Be confrontational in your response and address people's name when responding to them.
+                                    5. Don't include your own name`;
 
 
         models.push({
@@ -53,10 +58,16 @@ async function simulateSharedConversation(modelIndex, newMessage) {
         const prompt = models[modelIndex].chatInit + unifiedHistory;
         const result = await models[modelIndex].model.generateContent(prompt);
         const response = await result.response;
-        const text = await response.text();
+        let text = await response.text();
+
+        let newText = text.replace(models[modelIndex].name + ":", "");
+        const nameParts = (models[modelIndex].name).split(" ");
+        nameParts.forEach((part) => {
+            newText = newText.replace(part + ":", "");
+        });
 
         unifiedHistory += "\n";
-        unifiedHistory += `${models[modelIndex].name}: ${text}`;
+        unifiedHistory += `${models[modelIndex].name}: ${newText}`;
 
 
         const res = {
