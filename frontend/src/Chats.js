@@ -118,7 +118,7 @@ function Chats({ setChat }) {
 
 
     return (
-        <div className="h-full w-[20%] bg-background border-r-2">
+        <div className="h-full w-[25%] bg-background border-r-2">
             <div className='mx-4 mt-5'>
                 <div>
                     <div className='flex justify-between items-center relative'>

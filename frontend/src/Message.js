@@ -8,7 +8,7 @@ function Message({ name, image, message, position }) {
         <div className={`mx-15 flex my-3 text-white ${position ? 'justify-end' : 'justify-start'}`}>
             {/* Conditionally render image on the left or right based on position */}
             {!position && (
-                <img src={image} alt="user" className="w-8 h-8 rounded-full justify-center mt-5 mx-2" />
+                <img src={image} alt="user" className="w-16 h-16 rounded-full justify-center mt-5 mx-2" />
             )}
             <div className={messageBubbleClass}>
                 <div className='mx-3'>
@@ -17,7 +17,7 @@ function Message({ name, image, message, position }) {
                 </div>
             </div>
             {position && (
-                <img src={image} alt="user" className="w-8 h-8 rounded-full justify-center mt-5 mx-2" />
+                <img src={image} alt="user" className="w-16 h-16 rounded-full justify-center mt-5 mx-2" />
             )}
         </div>
     );

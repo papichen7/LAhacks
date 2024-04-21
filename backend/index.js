@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 require("dotenv").config();
 const cors = require('cors');
 
-const User = require('./models/User')
+const User = require("./models/User")  // Assuming 'User' is the model name for your figures
+
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
@@ -41,27 +42,50 @@ async function startConversation(figures) {
     if (models.length !== 0) {
         return models.map((model, index) => ({ message: `Created model for ${model.name} as model${index}` }));
     }
-
+    
     for (let i = 0; i < figures.length; i++) {
         const figure = figures[i];
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        const userSetupMessage = `You are ${figure.name}, from the period ${figure.info}. In this dialogue, you'll engage with both a curious individual named "User" and other historical figures. Your responses should directly address the latest point or question raised by the previous speaker. Conclude your input with one to two sentences that thoughtfully reflect your perspective or answer the last question or response posed. If the dialogue is empty, be the one to start the conversation.`;
 
+        // Fetch user details from the database using the ID
+        const userDetails = await User.findById(figure);
+        if (!userDetails) {
+            console.error('User not found with id:', figure);
+            continue;  // Skip if user details are not found
+        }
+
+        // Check if a model for this figure already exists
+        if (models.some(model => model.name === userDetails.name)) {
+            console.log(`Model already exists for ${userDetails.name}, skipping.`);
+            continue;  // Skip this iteration as model already exists
+        }
+
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const userSetupMessage = `You are ${userDetails.name}, from the period ${userDetails.info}. In this dialogue, you'll engage with both a curious individual named "User" and other historical figures with the following criteria:
+        1. Your responses should directly address the latest point raised by the previous speaker and debate them, but do not state your own name. 
+        2. Conclude your input within 2 sentences. 
+        3. If the dialogue is empty, be the one to start the conversation.
+        4. Be confrontational in your response and address people's name when responding to them.
+        5. Don't include your own name`;
 
         models.push({
-            _id: figure._id,
-            name: figure.name,
+            _id: userDetails._id,
+            name: userDetails.name,
+            image: userDetails.image,
             model: model,
             chatInit: userSetupMessage,
         });
-}
+    }
 
     return models.map((model, index) => ({ message: `Created model for ${model.name} as model${index}` }));
 }
 
+
+
 async function simulateSharedConversation(newMessage) {
     try {
-        const modelIndex = Math.floor(Math.random() * models.length);
+        let cnt = 0;
+
+        let modelIndex = Math.floor(Math.random() * models.length);
         // If empty string, this means that we want the model to continue conversation
         const to_return = [];
         if (newMessage !== "") {
@@ -80,10 +104,11 @@ async function simulateSharedConversation(newMessage) {
 
         const res = {
             _id: models[modelIndex]._id,
+            name: models[modelIndex].name,
+            image: models[modelIndex].image,
             response: text
         }
 
-        // console.log(to_return);
 
         to_return.push(res);
         return to_return;
@@ -98,7 +123,6 @@ async function simulateSharedConversation(newMessage) {
 app.post('/gemini', async (req, res) => {
     try {
         const figures = req.body;
-        // console.log(figures);
         const creationMessages = await startConversation(figures);
         res.json(creationMessages);
     } catch (error) {

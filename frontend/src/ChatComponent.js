@@ -1,69 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import Input from "./Input";
 import ChatBox from './ChatBox'; 
-import Stock from "./stock.jpg";
+import Default from "./img/stock.webp";
 import {
     ChevronLeftIcon,
 } from "@heroicons/react/24/outline";
 
 function ChatComponent({currChat}) {
-    const [messages, setMessages] = useState([]);
 
     const [conversationUsers, setConversationUsers] = useState([]);
+
+    const [conversationName, setConversationName] = useState("Default");
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         getConversation(currChat);
     }, [currChat]);
 
+
+    const imageContext = require.context('./img/', true);
+
+
+    const getImage = (imageName) => {
+      try {
+        return imageContext(`./${imageName}`);
+      } catch (e) {
+        // If image is not found, return the default image
+        return Default;
+      }
+    };
+
+    
     const getConversation = async (chatId) => {
         if (!chatId) return;
         try {
             const response = await fetch(`http://localhost:8000/conversation/${chatId}`);
             if (!response.ok) throw new Error('Failed to fetch conversation');
             const conversation = await response.json();
-            setMessages(formatMessages(conversation.chatHistory));
+            setConversationName(conversation.name);
+            console.log(conversation);
             setConversationUsers(conversation.users); // Assuming this includes user details you need
         } catch (error) {
             console.error('Error fetching conversation:', error);
         }
     };
 
-    const formatMessages = (chatHistory) => {
-        return chatHistory.map(item => ({
-            name: item.name,
-            image: item.image || Stock,
-            message: item.message,
-            position: item.position
-        }));
+    const addMessage = (objects) => {
+        console.log(objects)
+        setMessages(currentMessages => [
+            ...currentMessages,
+            ...objects.map(object => ({
+                name: object.name,
+                image: getImage(object.image), 
+                message: object.response,
+                position: object.name === "User"
+            }))
+        ]);
     };
 
-    const sendMessage = async (newMessage) => {
-        try {
-            const response = await fetch(`http://localhost:8000/conversation/${currChat}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chatHistory: newMessage })
-            });
-            if (!response.ok) throw new Error('Failed to send message');
-            const updatedConversation = await response.json();
-            setMessages(formatMessages(updatedConversation.chatHistory));
-        } catch (error) {
-            console.error('Error sending message:', error);
-        }
-    };
 
-    const handleSend = (obj) => {
-        // Prepare message object to fit the backend schema
-        console.log(obj)
-        const newMessage = {
-            message: obj.response,
-            name: "User", // Use a real user's name here, "You" is just a placeholder
-            image: Stock,
-            position: true // This should reflect whether the message is from the user or someone else
-        };
-        sendMessage(newMessage);
-    };
-
+    
     useEffect(() => {
         if (conversationUsers.length > 0) {
             startGemini(conversationUsers);
@@ -87,14 +83,14 @@ function ChatComponent({currChat}) {
     };
 
     return (
-        <div className="currbg bg-cyan-400 flex flex-col justify-between h-full w-[70%]">
+        <div className="currbg bg-cyan-400 flex flex-col justify-between h-full w-[75%]">
             <div className="h-full w-full backdrop-blur-[4px] bg-cover bg-center flex flex-col justify-between">
                 <div className='flex bg-white p-3'>
                     <ChevronLeftIcon className='h-[24px] w-[28px] mt-2 border-cyan-200 border'/>
-                    <div className='text-[24px] ml-2'>Conversation with friends</div>
+                    <div className='text-[24px] ml-2'>{conversationName}</div>
                 </div>
-                <ChatBox messages={messages} onSend={handleSend} />
-                <Input onSend={handleSend} />
+                    <ChatBox messages={messages} onSend={addMessage} />
+                    <Input onSend={addMessage} />
             </div>
         </div>
     )

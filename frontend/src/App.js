@@ -19,14 +19,12 @@ function App() {
   //     setMessages([...messages, { name: "User", image: Stock, message: newMessage, position: true }]);
   // };
 
-  const [currChat, setChat] = useState("6624debdd8e70f2a88939b67");
+  const [currChat, setChat] = useState("662503ea1b74af9ca79016e7");
 
   
   return (
     <div className="App bg-background text-black font-sans">
       <div className="flex h-screen">
-
-        <Sidebar></Sidebar>
 
         <Chats setChat={setChat}/>
 

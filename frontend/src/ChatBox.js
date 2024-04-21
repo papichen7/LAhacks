@@ -4,6 +4,7 @@ import {
   ChevronDoubleRightIcon
 } from "@heroicons/react/24/outline";
 
+
 function ChatBox({ messages, onSend}) {
     const messageEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
@@ -28,7 +29,7 @@ function ChatBox({ messages, onSend}) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: "" })
+            body: JSON.stringify({ message: "", })
         })
         .then(response => response.json())
         .then(data => {
@@ -39,6 +40,7 @@ function ChatBox({ messages, onSend}) {
             console.error('Error:', error);
         });
     };
+
   
 
     return (

@@ -14,11 +14,13 @@ export default function Input({ onSend }) {
     const handleSend = () => {
         if (input.trim()) {
             sendInputToServer(input);
-            const res = {
-                "_id": '6624e96388cf85ea8ddbe3d8',
-                "response": input
+            const userRes = {
+                id: "6624e96388cf85ea8ddbe3d8",
+                image: "something.webp",
+                name: "User",
+                response: input
             }
-            onSend(res);
+            onSend([userRes]);
             setInput('');
         }
     };
@@ -35,7 +37,7 @@ export default function Input({ onSend }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: data })
+            body: JSON.stringify({ message: data})
         })
         .then(response => response.json())
         .then(data => {
@@ -58,8 +60,6 @@ export default function Input({ onSend }) {
                 onKeyPress={handleKeyPress}
             />
             <button onClick={handleSend}><PaperAirplaneIcon className='mx-2 w-8 h-8' /></button>
-            <div className="w-px bg-gray-300 h-8 inline-block align-middle mt-2"></div>
-            <button><MicrophoneIcon className='mx-2 w-8 h-8'/></button>
         </div>
     );
 }
