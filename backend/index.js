@@ -83,7 +83,7 @@ async function startConversation(figures) {
 
 async function simulateSharedConversation(newMessage) {
     try {
-        let cnt = 0;
+
 
         let modelIndex = Math.floor(Math.random() * models.length);
         // If empty string, this means that we want the model to continue conversation
@@ -96,7 +96,13 @@ async function simulateSharedConversation(newMessage) {
         const prompt = models[modelIndex].chatInit + unifiedHistory;
         const result = await models[modelIndex].model.generateContent(prompt);
         const response = await result.response;
-        const text = await response.text();
+
+        let text = await response.text();
+        let newText = text.replace(models[modelIndex].name + ":", "");
+        const nameParts = (models[modelIndex].name).split(" ");
+        nameParts.forEach((part) => {
+            newText = newText.replace(part + ":", "");
+        });
 
         unifiedHistory += "\n";
         unifiedHistory += `${models[modelIndex].name}: ${text}`;
