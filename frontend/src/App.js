@@ -11,7 +11,7 @@ import Stock from "./stock.jpg"
 import Sidebar from './Sidebar';
 import Chats from './Chats';
 import ChatComponent from './ChatComponent'
-
+// .
 function App() {
 
   // const [messages, setMessages] = useState([{ name: "Alice", image: Stock, message: "I love coding!", position: false}]);
