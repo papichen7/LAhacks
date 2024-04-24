@@ -92,11 +92,11 @@ function Chats({ setChat }) {
 
     createNewChat(chatName, selectedUsers);
     setChatName(""); // Reset the chat name after submission
+    toggleCard();
   };
 
   const createNewChat = async (name, users) => {
     try {
-        console.log(name, users)
         const response = await fetch('http://localhost:8000/conversation', {
             method: 'POST',
             headers: {
@@ -125,21 +125,25 @@ function Chats({ setChat }) {
                         <h1 className='font-bold text-3xl'>Chats</h1>
                         <PlusCircleIcon className='h-8 w-8 cursor-pointer' onClick={toggleCard}/>
                         {isCardVisible && (
-                            <div className="absolute top-full right-0 w-[250px] mt-2 max-h-screen bg-white border border-gray-300 shadow-md p-4 rounded-lg z-50">
+                            <div className="absolute top-full right-0 w-[350px] mt-2 max-h-screen bg-white border border-gray-300 shadow-md p-4 rounded-lg z-50">
                                 <form onSubmit={handleSubmit}>
-                                  <div className='contacts  rounded-2xl p-2'>
+                                  <div className='contacts  rounded-2xl p-2 pb-5'>
                                   <div className="text-lg font-extrabold mb-2">Available Contacts</div>
                                   <div className="overflow-y-auto" style={{ maxHeight: '300px' }}>
-                                    <ul className="">
+                                    <ul className="flex flex-col items-center justify-center ">
                                     {Object.values(selectChars).map((user) => (
                                         <li
                                         key={user._id}
-                                        className={`cursor-pointer py-2 px-3 my-2 rounded-md ${user.selected ? "bg-green-400 bg-opacity-75" : "bg-white hover:bg-gray-100"}`}
+                                        className={`cursor-pointer py-2 px-3 max-w-[250px] my-2 rounded-md ${user.selected ? "bg-green-400 bg-opacity-75" : "bg-white hover:bg-gray-100"}`}
                                         onClick={() => handleNameClick(user._id)}
-                                        >
-                                        {user.name}
-
-                                        <img src={getImage(user.image)} alt={user.name}></img>
+                                      >
+                                        {user.name === "User" ? <div></div> : 
+                                        <div className="flex flex-col items-center justify-center">
+                                          <div className='font-semibold'>{user.name}</div>
+                                          <img src={getImage(user.image)} className="w-44 h-44" alt={user.name} />
+                                      </div>
+                                                                        
+                                        }
                                         
                                         </li>
                                     ))}
