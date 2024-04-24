@@ -22,7 +22,7 @@ require('./models/User');
 require('./models/Conversation');
 
 
-const models = [];
+let models = [];
 let unifiedHistory = "";
 
 const corsOptions = {
@@ -37,12 +37,27 @@ const userRouter = require("./routes/user");
 app.use('/conversation', conversationRouter);
 app.use('/user', userRouter);
 
+let prev = 0;
+
+
+async function clearModelsAsync() {
+    // Simulate an asynchronous operation, e.g., database operation, API call, etc.
+    // Here we just use setTimeout as a placeholder for the asynchronous operation.
+    return new Promise(resolve => {
+        setTimeout(() => {
+            models = []; // Assuming models is accessible in this scope.
+            unifiedHistory = "";
+            resolve();
+        }, 100); // Wait for 1 second to simulate async work
+    });
+}
+
 
 async function startConversation(figures) {
     if (models.length !== 0) {
-        return models.map((model, index) => ({ message: `Created model for ${model.name} as model${index}` }));
+        models = [];
+        unifiedHistory = "";
     }
-    
     for (let i = 0; i < figures.length; i++) {
         const figure = figures[i];
 
@@ -58,6 +73,8 @@ async function startConversation(figures) {
             console.log(`Model already exists for ${userDetails.name}, skipping.`);
             continue;  // Skip this iteration as model already exists
         }
+
+
 
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
         const userSetupMessage = `You are ${userDetails.name}, from the period ${userDetails.info}. In this dialogue, you'll engage with both a curious individual named "User" and other historical figures with the following criteria:
@@ -76,14 +93,39 @@ async function startConversation(figures) {
         });
     }
 
+
+
     return models.map((model, index) => ({ message: `Created model for ${model.name} as model${index}` }));
 }
 
 
 
 async function simulateSharedConversation(newMessage) {
+    
     try {
 
+        const safe = [
+            {
+                "category": "HARM_CATEGORY_DANGEROUS",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE",
+            },
+        ]
 
         let modelIndex = Math.floor(Math.random() * models.length);
         // If empty string, this means that we want the model to continue conversation
@@ -94,7 +136,7 @@ async function simulateSharedConversation(newMessage) {
         }
 
         const prompt = models[modelIndex].chatInit + unifiedHistory;
-        const result = await models[modelIndex].model.generateContent(prompt);
+        const result = await models[modelIndex].model.generateContent(prompt, safety_settings=safe);
         const response = await result.response;
 
         let text = await response.text();
@@ -105,7 +147,7 @@ async function simulateSharedConversation(newMessage) {
         });
 
         unifiedHistory += "\n";
-        unifiedHistory += `${models[modelIndex].name}: ${text}`;
+        unifiedHistory += `${models[modelIndex].name}: ${newText}`;
 
 
         const res = {
@@ -129,8 +171,11 @@ async function simulateSharedConversation(newMessage) {
 app.post('/gemini', async (req, res) => {
     try {
         const figures = req.body;
+        console.log("input", figures);
         const creationMessages = await startConversation(figures);
         res.json(creationMessages);
+        console.log("input", creationMessages);
+
     } catch (error) {
         res.status(500).send('Server Error: ' + error.message);
     }

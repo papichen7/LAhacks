@@ -19,7 +19,7 @@ function App() {
   //     setMessages([...messages, { name: "User", image: Stock, message: newMessage, position: true }]);
   // };
 
-  const [currChat, setChat] = useState("662503ea1b74af9ca79016e7");
+  const [currChat, setChat] = useState("662569f9394a0f6875f5ad1b");
 
   
   return (

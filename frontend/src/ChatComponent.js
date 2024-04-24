@@ -38,7 +38,6 @@ function ChatComponent({currChat}) {
             if (!response.ok) throw new Error('Failed to fetch conversation');
             const conversation = await response.json();
             setConversationName(conversation.name);
-            console.log(conversation);
             setConversationUsers(conversation.users); // Assuming this includes user details you need
         } catch (error) {
             console.error('Error fetching conversation:', error);
@@ -46,7 +45,7 @@ function ChatComponent({currChat}) {
     };
 
     const addMessage = (objects) => {
-        console.log(objects)
+        // console.log(objects)
         setMessages(currentMessages => [
             ...currentMessages,
             ...objects.map(object => ({
@@ -63,6 +62,7 @@ function ChatComponent({currChat}) {
     useEffect(() => {
         if (conversationUsers.length > 0) {
             startGemini(conversationUsers);
+            console.log("Gemini", conversationUsers);
         }
     }, [conversationUsers]);
 
@@ -74,8 +74,10 @@ function ChatComponent({currChat}) {
         };
 
         try {
+            console.log("In Gemini", requestOptions);
             const response = await fetch('http://localhost:8000/gemini', requestOptions);
             const data = await response.json();
+            console.log()
             console.log('Activation successful:', data);
         } catch (error) {
             console.error('Error activating Gemini:', error);
